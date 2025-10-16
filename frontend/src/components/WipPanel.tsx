@@ -14,7 +14,7 @@ export default function WipPanel() {
 
   return (
     <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-900/5">
-      <h3 className="font-medium text-slate-900">WIP per Assignee</h3>
+      <h3 className="font-medium text-slate-900">Work in progress by assignee</h3>
 
       {isLoading && (
         <div className="mt-4 space-y-2">
@@ -48,7 +48,7 @@ export default function WipPanel() {
             ))
           ) : (
             <li className="rounded-xl border border-slate-200 px-3 py-4 text-center text-sm text-slate-500">
-              Belum ada WIP yang tercatat.
+              No work in progress recorded yet.
             </li>
           )}
         </ul>

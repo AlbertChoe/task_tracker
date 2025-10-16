@@ -1,4 +1,4 @@
-const DEFAULT_LOCALE = 'id-ID';
+const DEFAULT_LOCALE = 'en-GB';
 
 export function formatDateTime(
   value: string | number | Date,

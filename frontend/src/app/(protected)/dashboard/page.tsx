@@ -12,7 +12,7 @@ export default function DashboardPage() {
         <div>
           <h1 className="text-2xl font-semibold text-slate-900">Dashboard</h1>
           <p className="text-slate-500">
-            Ringkasan progres tim & aktivitas terbaru.
+            Team progress overview and the most recent updates.
           </p>
         </div>
 
@@ -21,13 +21,13 @@ export default function DashboardPage() {
             href="/tasks"
             className="inline-flex items-center rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
           >
-            Semua Tugas
+            View all tasks
           </Link>
           <Link
             href="/tasks"
             className="inline-flex items-center rounded-lg bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-800"
           >
-            + Tugas Baru
+            + New task
           </Link>
         </div>
       </div>
@@ -38,12 +38,12 @@ export default function DashboardPage() {
         <section className="lg:col-span-2">
           <div className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-900/5">
             <header className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
-              <h2 className="font-medium text-slate-900">Aktivitas Terbaru</h2>
+              <h2 className="font-medium text-slate-900">Latest activity</h2>
               <Link
                 href="/tasks"
                 className="text-sm text-indigo-600 hover:text-indigo-500"
               >
-                Lihat semua
+                See more
               </Link>
             </header>
 
@@ -57,13 +57,13 @@ export default function DashboardPage() {
           <WipPanel />
 
           <div className="rounded-2xl border border-slate-200/80 bg-gradient-to-br from-indigo-50 to-sky-50 p-5">
-            <h3 className="font-medium text-slate-900">Tips singkat</h3>
+            <h3 className="font-medium text-slate-900">Quick tips</h3>
             <ul className="mt-2 list-inside list-disc space-y-1 text-sm text-slate-600">
               <li>
-                Prioritaskan tugas <strong>Overdue</strong> lebih dulu.
+                Tackle <strong>overdue</strong> items before anything else.
               </li>
-              <li>Gunakan filter status di halaman Tugas.</li>
-              <li>Tambahkan catatan tiap perubahan status.</li>
+              <li>Use task filters to focus on specific statuses.</li>
+              <li>Leave a log whenever you change a task&apos;s status.</li>
             </ul>
           </div>
         </aside>
