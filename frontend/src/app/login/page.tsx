@@ -39,7 +39,7 @@ function LoginContent() {
       saveTokenToCookie(data.access_token);
       router.push(next);
     } catch (err: any) {
-      setError(err?.message || 'Terjadi kesalahan');
+      setError(err?.message || 'Something went wrong');
     } finally {
       setLoading(false);
     }
@@ -52,7 +52,7 @@ function LoginContent() {
         <div className="text-center mb-8">
           <h1 className="text-2xl font-semibold">Team Task Tracker</h1>
           <p className="text-slate-400 text-sm">
-            Masuk ke panel manajer proyek
+            Sign in to access the project manager panel.
           </p>
         </div>
 
@@ -126,7 +126,7 @@ function LoginContent() {
               disabled={loading}
               className="w-full bg-indigo-500 hover:bg-indigo-400 text-white font-medium shadow-lg shadow-indigo-900/30 disabled:opacity-50 disabled:cursor-not-allowed transition"
             >
-              {loading ? 'Memproses…' : 'Masuk'}
+              {loading ? 'Signing in…' : 'Sign in'}
             </Button>
           </form>
         </div>
@@ -139,7 +139,7 @@ function LoginFallback() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 flex items-center justify-center text-slate-200">
       <div className="animate-pulse text-sm uppercase tracking-[0.3em]">
-        Memuat...
+        Loading...
       </div>
     </div>
   );

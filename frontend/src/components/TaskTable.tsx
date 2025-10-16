@@ -14,23 +14,41 @@ interface Props {
 }
 
 export default function TaskTable({ limit, condensed }: Props) {
+  const isPaginated = !limit;
   const [status, setStatus] = useState('');
   const [qRaw, setQRaw] = useState('');
   const [q, setQ] = useState('');
+  const [page, setPage] = useState(1);
+  const [size, setSize] = useState(10);
 
-  // debounce search input
   useEffect(() => {
     const t = setTimeout(() => setQ(qRaw), 300);
     return () => clearTimeout(t);
   }, [qRaw]);
 
+  useEffect(() => {
+    if (!isPaginated && page !== 1) {
+      setPage(1);
+    }
+  }, [isPaginated, page]);
+
+  useEffect(() => {
+    if (isPaginated) {
+      setPage(1);
+    }
+  }, [status, q, isPaginated]);
+
+  const effectivePage = isPaginated ? page : 1;
+  const effectiveSize = limit ?? size;
+
   const params = new URLSearchParams();
   if (status) params.set('status', status);
   if (q) params.set('q', q);
-  if (limit) params.set('limit', String(limit));
-  params.set('order', 'desc');
+  params.set('page', String(effectivePage));
+  params.set('size', String(effectiveSize));
 
-  const key = `/tasks?${params.toString()}`;
+  const search = params.toString();
+  const key = `/tasks${search ? `?${search}` : ''}`;
 
   const { data, mutate, isLoading, error } = useSWR<any>(key, (url: string) =>
     api<any>(url),
@@ -44,15 +62,26 @@ export default function TaskTable({ limit, condensed }: Props) {
     return [];
   }, [data]);
 
+  useEffect(() => {
+    if (!isPaginated) return;
+    if (!isLoading && items.length === 0 && page > 1) {
+      setPage((prev) => Math.max(1, prev - 1));
+    }
+  }, [isPaginated, isLoading, items.length, page]);
+
   async function remove(id: string) {
-    if (!confirm('Hapus tugas ini?')) return;
+    if (!confirm('Delete this task?')) return;
     await api(`/tasks/${id}`, { method: 'DELETE' });
     mutate();
   }
 
+  const startIndex = items.length ? (effectivePage - 1) * effectiveSize + 1 : 0;
+  const endIndex = items.length ? startIndex + items.length - 1 : 0;
+  const canPrev = isPaginated && page > 1;
+  const canNext = isPaginated && items.length === effectiveSize;
+
   return (
     <div>
-      {/* Filters */}
       <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center">
         <select
           aria-label="Filter status"
@@ -60,15 +89,15 @@ export default function TaskTable({ limit, condensed }: Props) {
           value={status}
           onChange={(e) => setStatus(e.target.value)}
         >
-          <option value="">Semua status</option>
-          <option value="BELUM_DIMULAI">Belum Dimulai</option>
-          <option value="SEDANG_DIKERJAKAN">Sedang Dikerjakan</option>
-          <option value="SELESAI">Selesai</option>
+          <option value="">All statuses</option>
+          <option value="BELUM_DIMULAI">Not started</option>
+          <option value="SEDANG_DIKERJAKAN">In progress</option>
+          <option value="SELESAI">Completed</option>
         </select>
         <input
-          aria-label="Cari tugas"
+          aria-label="Search tasks"
           className="w-full rounded-lg border px-3 py-2 text-sm sm:w-64"
-          placeholder="Cari judul/assignee..."
+          placeholder="Search title or assignee..."
           value={qRaw}
           onChange={(e) => setQRaw(e.target.value)}
         />
@@ -78,10 +107,10 @@ export default function TaskTable({ limit, condensed }: Props) {
         <table className="w-full text-sm">
           <thead className="bg-slate-50 text-slate-700">
             <tr>
-              <th className={`${cellCls(condensed)} text-left`}>Judul</th>
+              <th className={`${cellCls(condensed)} text-left`}>Title</th>
               <th className={`${cellCls(condensed)} text-left`}>Assignee</th>
               <th className={`${cellCls(condensed)} text-left`}>Status</th>
-              <th className={`${cellCls(condensed)} text-left`}>Tanggal</th>
+              <th className={`${cellCls(condensed)} text-left`}>Dates</th>
               <th className={`${cellCls(condensed)} w-40 text-right`}></th>
             </tr>
           </thead>
@@ -92,7 +121,7 @@ export default function TaskTable({ limit, condensed }: Props) {
                   className={`${cellCls(condensed)} text-slate-400`}
                   colSpan={5}
                 >
-                  Memuat…
+                  Loading…
                 </td>
               </tr>
             )}
@@ -101,7 +130,7 @@ export default function TaskTable({ limit, condensed }: Props) {
               <tr>
                 <td className={`${cellCls(condensed)}`} colSpan={5}>
                   <div className="py-10 text-center text-slate-500">
-                    Belum ada tugas yang cocok.
+                    No matching tasks found.
                   </div>
                 </td>
               </tr>
@@ -113,7 +142,7 @@ export default function TaskTable({ limit, condensed }: Props) {
                   className={`${cellCls(condensed)} text-red-600`}
                   colSpan={5}
                 >
-                  Gagal memuat: {String(error?.message || 'Unknown error')}
+                  Failed to load: {String(error?.message || 'Unknown error')}
                 </td>
               </tr>
             )}
@@ -144,13 +173,13 @@ export default function TaskTable({ limit, condensed }: Props) {
                     href={`/tasks/${t.id}`}
                     className="inline-flex items-center gap-1 rounded-lg border border-slate-200 px-3 py-1.5 hover:bg-slate-50"
                   >
-                    Detail
+                    Details
                   </Link>
                   <button
                     onClick={() => remove(t.id)}
                     className="inline-flex items-center gap-1 rounded-lg border border-red-200 px-3 py-1.5 text-red-600 hover:bg-red-50"
                   >
-                    Hapus
+                    Delete
                   </button>
                 </td>
               </tr>
@@ -158,6 +187,57 @@ export default function TaskTable({ limit, condensed }: Props) {
           </tbody>
         </table>
       </div>
+
+      {isPaginated && (
+        <div className="mt-4 flex flex-col gap-3 border-t border-slate-200 pt-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="text-xs text-slate-500">
+            {items.length
+              ? `Showing ${startIndex}–${endIndex}`
+              : 'Nothing to display'}
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-2 text-sm text-slate-600">
+              <span>Tampil</span>
+              <select
+                value={effectiveSize}
+                onChange={(e) => {
+                  setSize(Number(e.target.value));
+                  setPage(1);
+                }}
+                className="rounded-lg border px-2 py-1 text-sm"
+              >
+                {[10, 20, 50].map((opt) => (
+                  <option key={opt} value={opt}>
+                    {opt}
+                  </option>
+                ))}
+              </select>
+              <span>per page</span>
+            </div>
+            <div className="inline-flex overflow-hidden rounded-lg border border-slate-200 shadow-sm">
+              <button
+                type="button"
+                onClick={() => canPrev && setPage((prev) => prev - 1)}
+                disabled={!canPrev}
+                className="px-3 py-2 text-sm text-slate-600 transition-colors enabled:hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Previous
+              </button>
+              <span className="flex items-center border-l border-r border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-500">
+                Page {effectivePage}
+              </span>
+              <button
+                type="button"
+                onClick={() => canNext && setPage((prev) => prev + 1)}
+                disabled={!canNext}
+                className="px-3 py-2 text-sm text-slate-600 transition-colors enabled:hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -2,9 +2,9 @@ import React from 'react';
 import { Status } from '@/types';
 
 const LABEL: Record<Status, string> = {
-  BELUM_DIMULAI: 'Belum dimulai',
-  SEDANG_DIKERJAKAN: 'Sedang dikerjakan',
-  SELESAI: 'Selesai',
+  BELUM_DIMULAI: 'Not started',
+  SEDANG_DIKERJAKAN: 'In progress',
+  SELESAI: 'Completed',
 };
 
 const COLOR: Record<Status, string> = {

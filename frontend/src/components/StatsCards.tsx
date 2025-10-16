@@ -45,7 +45,7 @@ export default function StatsCards() {
   if (error || !data) {
     return (
       <div className="mb-6 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
-        Gagal memuat ringkasan dashboard.
+        Failed to load dashboard summary.
       </div>
     );
   }
@@ -58,7 +58,7 @@ export default function StatsCards() {
 
   const cards = [
     {
-      label: 'Total Tugas',
+      label: 'Total tasks',
       value: total,
       icon: (
         <svg
@@ -75,7 +75,7 @@ export default function StatsCards() {
       ),
     },
     {
-      label: 'Sedang Dikerjakan',
+      label: 'In progress',
       value: inProgress,
       icon: (
         <svg
@@ -92,7 +92,7 @@ export default function StatsCards() {
       ),
     },
     {
-      label: 'Selesai',
+      label: 'Completed',
       value: done,
       icon: (
         <svg
@@ -155,11 +155,11 @@ export default function StatsCards() {
         <div className="flex flex-wrap items-center gap-6">
           <div className="flex items-center gap-2">
             <span className="inline-flex h-2 w-2 rounded-full bg-sky-500" />
-            <span className="text-sm text-slate-500">Due ≤ 3 hari</span>
+            <span className="text-sm text-slate-500">Due in ≤ 3 days</span>
             <strong className="ml-1 text-slate-900">{dueSoon}</strong>
           </div>
           <div className="text-xs text-slate-400">
-            Prioritaskan task ini agar tidak menjadi overdue.
+            Prioritize these tasks to keep them from becoming overdue.
           </div>
         </div>
       </div>

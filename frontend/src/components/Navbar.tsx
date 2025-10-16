@@ -59,7 +59,7 @@ export default function Navbar() {
           onClick={handleLogout}
           className="inline-flex items-center rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100"
         >
-          Keluar
+          Sign out
         </button>
       </div>
     </header>

@@ -25,9 +25,9 @@ type Inputs = Omit<
 };
 
 const STATUS = {
-  BELUM_DIMULAI: 'Belum Dimulai',
-  SEDANG_DIKERJAKAN: 'Sedang Dikerjakan',
-  SELESAI: 'Selesai',
+  BELUM_DIMULAI: 'Not started',
+  SEDANG_DIKERJAKAN: 'In progress',
+  SELESAI: 'Completed',
 } as const;
 
 function trimOrNull(v?: string | null) {
@@ -44,15 +44,38 @@ function toISOStringOrNull(v?: string | null) {
   return isNaN(d.getTime()) ? null : d.toISOString();
 }
 
+function getJakartaLocalDateTimeString() {
+  const now = new Date();
+
+  const formatter = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Jakarta',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  });
+
+  const parts = formatter.formatToParts(now);
+  const get = (type: string) => parts.find((p) => p.type === type)?.value || '';
+
+  const y = get('year');
+  const m = get('month');
+  const d = get('day');
+  const h = get('hour');
+  const min = get('minute');
+
+  return `${y}-${m}-${d}T${h}:${min}`;
+}
+
 function cleanTaskPayload(data: Inputs): Partial<Task> {
-  // Normalize and coerce
-  const title = trimOrNull(data.title) ?? ''; // required
+  const title = trimOrNull(data.title) ?? '';
   const description = trimOrNull(data.description) ?? undefined;
   const assignee = trimOrNull(data.assignee) ?? undefined;
 
-  const status = (data.status ?? 'BELUM_DIMULAI') as Task['status']; // safe default
+  const status = (data.status ?? 'BELUM_DIMULAI') as Task['status'];
 
-  // Dates: keep as string (FastAPI/Pydantic will parse), or null/undefined
   const start_date =
     trimOrNull((data as any).start_date as string | null) ?? undefined;
   const due_date =
@@ -99,7 +122,7 @@ export default function TaskForm({
       start_date: (initial as any)?.start_date ?? '',
       due_date: (initial as any)?.due_date ?? '',
       completed_at: initial?.completed_at
-        ? new Date(initial.completed_at).toISOString().slice(0, 16) // to datetime-local
+        ? new Date(initial.completed_at).toISOString().slice(0, 16)
         : '',
     },
   });
@@ -107,7 +130,12 @@ export default function TaskForm({
   const status = watch('status');
 
   useEffect(() => {
-    if (status !== 'SELESAI') setValue('completed_at', '');
+    if (status === 'SELESAI') {
+      const nowJakarta = getJakartaLocalDateTimeString();
+      setValue('completed_at', nowJakarta);
+    } else {
+      setValue('completed_at', '');
+    }
   }, [status, setValue]);
 
   async function submit(data: Inputs) {
@@ -122,12 +150,12 @@ export default function TaskForm({
     >
       <div className="space-y-1.5">
         <Label htmlFor="title">
-          Judul <span className="text-red-500">*</span>
+          Title <span className="text-red-500">*</span>
         </Label>
         <Input
           id="title"
-          placeholder="Mis. Implementasi API Auth"
-          {...register('title', { required: 'Judul wajib diisi' })}
+          placeholder="e.g. Implement auth API"
+          {...register('title', { required: 'Title is required' })}
         />
         {errors.title && (
           <p className="text-xs text-red-500">{errors.title.message}</p>
@@ -135,10 +163,10 @@ export default function TaskForm({
       </div>
 
       <div className="space-y-1.5">
-        <Label htmlFor="description">Deskripsi</Label>
+        <Label htmlFor="description">Description</Label>
         <Textarea
           id="description"
-          placeholder="Detail pekerjaan, acceptance criteria, dsb."
+          placeholder="Work details, acceptance criteria, etc."
           {...register('description')}
           rows={4}
         />
@@ -149,7 +177,7 @@ export default function TaskForm({
           <Label htmlFor="assignee">Assignee</Label>
           <Input
             id="assignee"
-            placeholder="Nama PIC"
+            placeholder="Person in charge"
             {...register('assignee')}
           />
         </div>
@@ -162,7 +190,7 @@ export default function TaskForm({
             render={({ field }) => (
               <Select value={field.value} onValueChange={field.onChange}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Pilih status" />
+                  <SelectValue placeholder="Select status" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="BELUM_DIMULAI">
@@ -181,20 +209,20 @@ export default function TaskForm({
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div className="space-y-1.5">
-          <Label htmlFor="start_date">Mulai</Label>
+          <Label htmlFor="start_date">Start date</Label>
           <Input id="start_date" type="date" {...register('start_date')} />
           <p className="text-xs text-muted-foreground">
-            Opsional. Format: YYYY-MM-DD
+            Optional. Format: YYYY-MM-DD
           </p>
         </div>
 
         <div className="space-y-1.5">
-          <Label htmlFor="due_date">Jatuh Tempo</Label>
+          <Label htmlFor="due_date">Due date</Label>
           <Input id="due_date" type="date" {...register('due_date')} />
         </div>
 
         <div className="space-y-1.5">
-          <Label htmlFor="completed_at">Selesai Pada</Label>
+          <Label htmlFor="completed_at">Completed at</Label>
           <Input
             id="completed_at"
             type="datetime-local"
@@ -202,7 +230,7 @@ export default function TaskForm({
             {...register('completed_at')}
           />
           <p className="text-xs text-muted-foreground">
-            Aktif jika status <b>Selesai</b>.
+            Automatically filled when status is <b>Completed</b>.
           </p>
         </div>
       </div>
@@ -213,7 +241,7 @@ export default function TaskForm({
           type="submit"
           className="w-full sm:w-auto"
         >
-          {isSubmitting ? 'Menyimpan…' : 'Simpan'}
+          {isSubmitting ? 'Saving…' : 'Save'}
         </Button>
       </div>
     </form>

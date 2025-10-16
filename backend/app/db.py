@@ -1,6 +1,7 @@
 from sqlmodel import SQLModel, Field, create_engine, Session, Relationship
 from typing import Optional, List
 from datetime import datetime, date
+from zoneinfo import ZoneInfo
 import uuid
 from .core.config import settings
 from sqlalchemy.engine.url import make_url
@@ -16,6 +17,10 @@ except Exception as e:
         f"Invalid DATABASE_URL: {repr(settings.DATABASE_URL)}") from e
 
 engine = create_engine(settings.DATABASE_URL, pool_pre_ping=True)
+
+
+def jakarta_now() -> datetime:
+    return datetime.now(ZoneInfo("Asia/Jakarta"))
 
 
 def init_db():
@@ -34,7 +39,7 @@ class User(SQLModel, table=True):
     password_hash: str
     name: str
     role: str = "PM"
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=jakarta_now)
 
 
 class Task(SQLModel, table=True):
@@ -45,7 +50,7 @@ class Task(SQLModel, table=True):
     assignee: Optional[str] = None
     created_by: uuid.UUID = Field(foreign_key="users.id")
     status: str
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=jakarta_now)
     start_date: Optional[date] = None
     due_date: Optional[date] = None
     completed_at: Optional[datetime] = None
@@ -58,5 +63,5 @@ class TaskLog(SQLModel, table=True):
     task_id: uuid.UUID = Field(foreign_key="tasks.id")
     event: str
     detail: Optional[str] = None
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=jakarta_now)
     task: Task | None = Relationship(back_populates="logs")

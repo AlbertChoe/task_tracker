@@ -70,9 +70,9 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
   return (
     <div className="mx-auto max-w-7xl  py-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-slate-900">Detail Tugas</h1>
+        <h1 className="text-2xl font-semibold text-slate-900">Task details</h1>
         <p className="text-slate-500">
-          Ubah informasi tugas dan tambahkan catatan aktivitas.
+          Update task information and add activity notes.
         </p>
       </div>
 
@@ -88,7 +88,7 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
         </section>
 
         <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-900/5">
-          <h2 className="mb-3 font-medium text-slate-900">Riwayat</h2>
+          <h2 className="mb-3 font-medium text-slate-900">Activity log</h2>
 
           <form onSubmit={addLog} className="mb-4 flex gap-2">
             <input
@@ -103,13 +103,13 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
               value={detail}
               onChange={(e) => setDetail(e.target.value)}
               className="flex-1 rounded-lg border px-2 py-2 text-sm"
-              placeholder="Detail"
+              placeholder="Details"
             />
             <button
               disabled={adding}
               className="rounded-lg bg-slate-900 px-3 py-2 text-sm text-white disabled:opacity-50"
             >
-              {adding ? 'Menambah…' : 'Tambah'}
+              {adding ? 'Adding…' : 'Add'}
             </button>
           </form>
 
@@ -137,7 +137,7 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
               ))}
               {!logs?.length && (
                 <li className="rounded border p-4 text-center text-sm text-slate-500">
-                  Belum ada riwayat.
+                  No activity yet.
                 </li>
               )}
             </ul>
