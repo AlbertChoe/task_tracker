@@ -1,0 +1,41 @@
+services:
+  db:
+    image: postgres:16
+    container_name: ttt-postgres
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+      POSTGRES_DB: ttt
+    ports: ["5432:5432"]
+    volumes: [ "dbdata:/var/lib/postgresql/data" ]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d ttt"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    container_name: ttt-backend
+    environment:
+      DATABASE_URL: postgresql://app:app@db:5432/ttt
+      JWT_SECRET: dev-secret-change-me
+      CORS_ORIGINS: http://localhost:3000
+    depends_on:
+      db:
+        condition: service_healthy
+    ports: ["8000:8000"]
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+
+  frontend:
+    build: ./frontend
+    container_name: ttt-frontend
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
+      PROTECTED_PATHS: /dashboard,/tasks
+    depends_on: [ backend ]
+    ports: ["3000:3000"]
+    command: npm run dev
+
+volumes:
+  dbdata: {}

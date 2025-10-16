@@ -1,0 +1,11 @@
+# API Quick Map
+- POST /auth/login  → { access_token }
+- GET  /auth/me      (requires header Authorization: Bearer <token>)
+- GET  /tasks?status=&q=&page=1&size=10
+- POST /tasks
+- GET  /tasks/{id}
+- PATCH /tasks/{id}
+- DELETE /tasks/{id}
+- GET  /tasks/{id}/logs
+- POST /tasks/{id}/logs
+- GET  /dashboard/summary
