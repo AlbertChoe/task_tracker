@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -8,6 +8,14 @@ import { saveTokenToCookie } from '@/lib/auth';
 import { api } from '@/lib/api';
 
 export default function LoginPage() {
+  return (
+    <Suspense fallback={<LoginFallback />}>
+      <LoginContent />
+    </Suspense>
+  );
+}
+
+function LoginContent() {
   const router = useRouter();
   const params = useSearchParams();
   const next = params.get('next') || '/dashboard';
@@ -122,6 +130,16 @@ export default function LoginPage() {
             </Button>
           </form>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function LoginFallback() {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 flex items-center justify-center text-slate-200">
+      <div className="animate-pulse text-sm uppercase tracking-[0.3em]">
+        Memuat...
       </div>
     </div>
   );
