@@ -24,6 +24,6 @@ settings = SimpleNamespace(
     PROTECTED_PATHS=os.getenv("PROTECTED_PATHS", "/tasks,/dashboard"),
 
     ACCESS_TOKEN_EXPIRE_MINUTES=int(
-        os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30")),
+        os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "300")),
     JWT_ALG=os.getenv("JWT_ALG", "HS256"),
 )

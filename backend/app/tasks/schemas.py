@@ -28,6 +28,7 @@ class TaskOut(TaskBase):
     id: str
     created_at: datetime
     completed_at: Optional[datetime] = None
+    created_by: str
 
 class TaskLogCreate(BaseModel):
     event: str

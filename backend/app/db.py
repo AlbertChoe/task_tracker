@@ -43,6 +43,7 @@ class Task(SQLModel, table=True):
     title: str
     description: Optional[str] = None
     assignee: Optional[str] = None
+    created_by: uuid.UUID = Field(foreign_key="users.id")
     status: str
     created_at: datetime = Field(default_factory=datetime.utcnow)
     start_date: Optional[date] = None

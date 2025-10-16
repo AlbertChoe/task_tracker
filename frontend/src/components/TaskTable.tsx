@@ -81,6 +81,7 @@ export default function TaskTable({ limit, condensed }: Props) {
               <th className={`${cellCls(condensed)} text-left`}>Assignee</th>
               <th className={`${cellCls(condensed)} text-left`}>Status</th>
               <th className={`${cellCls(condensed)} text-left`}>Tanggal</th>
+              <th className={`${cellCls(condensed)} w-40 text-right`}></th>
             </tr>
           </thead>
           <tbody>
@@ -121,7 +122,7 @@ export default function TaskTable({ limit, condensed }: Props) {
                 key={t.id}
                 className="border-t border-slate-100 hover:bg-slate-50/60"
               >
-                <td className={`${cellCls(condensed)} align-middle`}>
+                <td className={cellCls(condensed)}>
                   <div className="line-clamp-1 font-medium text-slate-900">
                     {t.title}
                   </div>
@@ -129,33 +130,27 @@ export default function TaskTable({ limit, condensed }: Props) {
                     {t.description || '—'}
                   </div>
                 </td>
-
-                <td className={`${cellCls(condensed)} align-middle`}>
-                  <span className="block truncate">{t.assignee || '-'}</span>
+                <td className={cellCls(condensed)}>{t.assignee || '-'}</td>
+                <td className={cellCls(condensed)}>
+                  <StatusBadge status={t.status} />
                 </td>
-
-                <td
-                  className={`${cellCls(
-                    condensed,
-                  )} align-middle whitespace-nowrap`}
-                >
-                  <StatusBadge
-                    status={t.status}
-                    size={condensed ? 'sm' : 'md'}
-                  />
-                </td>
-
-                <td className={`${cellCls(condensed)} align-middle`}>
+                <td className={cellCls(condensed)}>
                   <div>Start: {t.start_date || '-'}</div>
                   <div>Due: {t.due_date || '-'}</div>
                 </td>
-
-                <td
-                  className={`${cellCls(
-                    condensed,
-                  )} align-middle space-x-2 text-right`}
-                >
-                  {/* ...buttons... */}
+                <td className={`${cellCls(condensed)} space-x-2 text-right`}>
+                  <Link
+                    href={`/tasks/${t.id}`}
+                    className="inline-flex items-center gap-1 rounded-lg border border-slate-200 px-3 py-1.5 hover:bg-slate-50"
+                  >
+                    Detail
+                  </Link>
+                  <button
+                    onClick={() => remove(t.id)}
+                    className="inline-flex items-center gap-1 rounded-lg border border-red-200 px-3 py-1.5 text-red-600 hover:bg-red-50"
+                  >
+                    Hapus
+                  </button>
                 </td>
               </tr>
             ))}

@@ -7,6 +7,7 @@ export interface Task {
   assignee?: string
   status: Status
   created_at: string
+  created_by: string
   start_date?: string
   due_date?: string
   completed_at?: string
