@@ -7,6 +7,7 @@ import TaskForm from '@/components/TaskForm';
 import StatusBadge from '@/components/StatusBadge';
 import { useState } from 'react';
 import { useSWRConfig } from 'swr';
+import { formatDateTime } from '@/lib/datetime';
 
 export default function TaskDetail({ params }: { params: { id: string } }) {
   const { mutate: mutateGlobal } = useSWRConfig();
@@ -128,7 +129,7 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
               {logs?.map((l) => (
                 <li key={l.id} className="rounded border p-3 text-sm">
                   <div className="font-mono text-xs text-slate-500">
-                    {new Date(l.created_at).toLocaleString()}
+                    {formatDateTime(l.created_at)}
                   </div>
                   <div className="font-semibold">{l.event}</div>
                   <div className="text-slate-700">{l.detail || '-'}</div>

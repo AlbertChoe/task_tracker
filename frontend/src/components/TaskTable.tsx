@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { api } from '@/lib/api';
 import StatusBadge from './StatusBadge';
 import { Task } from '@/types';
+import { formatDate } from '@/lib/datetime';
 
 interface Props {
   limit?: number;
@@ -135,8 +136,8 @@ export default function TaskTable({ limit, condensed }: Props) {
                   <StatusBadge status={t.status} />
                 </td>
                 <td className={cellCls(condensed)}>
-                  <div>Start: {t.start_date || '-'}</div>
-                  <div>Due: {t.due_date || '-'}</div>
+                  <div>Start: {formatDate(t.start_date ?? '')}</div>
+                  <div>Due: {formatDate(t.due_date ?? '')}</div>
                 </td>
                 <td className={`${cellCls(condensed)} space-x-2 text-right`}>
                   <Link
