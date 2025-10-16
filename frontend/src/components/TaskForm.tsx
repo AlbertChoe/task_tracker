@@ -4,7 +4,6 @@ import { useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { Task } from '@/types';
 
-// shadcn/ui
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -18,7 +17,10 @@ import {
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 
-type Inputs = Omit<Task, 'id' | 'created_at' | 'completed_at'> & {
+type Inputs = Omit<
+  Task,
+  'id' | 'created_at' | 'completed_at' | 'created_by'
+> & {
   completed_at?: string | null;
 };
 
@@ -37,8 +39,6 @@ function trimOrNull(v?: string | null) {
 function toISOStringOrNull(v?: string | null) {
   const t = trimOrNull(v);
   if (!t) return null;
-  // datetime-local => "YYYY-MM-DDTHH:mm"
-  // add ":00" seconds if missing so it’s valid ISO
   const withSeconds = t.length === 16 ? `${t}:00` : t;
   const d = new Date(withSeconds);
   return isNaN(d.getTime()) ? null : d.toISOString();
@@ -106,7 +106,6 @@ export default function TaskForm({
 
   const status = watch('status');
 
-  // If status changes away from "SELESAI", clear completed_at
   useEffect(() => {
     if (status !== 'SELESAI') setValue('completed_at', '');
   }, [status, setValue]);
@@ -121,7 +120,6 @@ export default function TaskForm({
       onSubmit={handleSubmit(submit)}
       className={cn('space-y-4', className)}
     >
-      {/* Title */}
       <div className="space-y-1.5">
         <Label htmlFor="title">
           Judul <span className="text-red-500">*</span>
@@ -136,7 +134,6 @@ export default function TaskForm({
         )}
       </div>
 
-      {/* Description */}
       <div className="space-y-1.5">
         <Label htmlFor="description">Deskripsi</Label>
         <Textarea
@@ -147,7 +144,6 @@ export default function TaskForm({
         />
       </div>
 
-      {/* Assignee + Status */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
           <Label htmlFor="assignee">Assignee</Label>
@@ -183,7 +179,6 @@ export default function TaskForm({
         </div>
       </div>
 
-      {/* Dates */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div className="space-y-1.5">
           <Label htmlFor="start_date">Mulai</Label>

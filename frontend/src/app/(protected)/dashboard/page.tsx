@@ -7,7 +7,6 @@ import TaskTable from '@/components/TaskTable';
 export default function DashboardPage() {
   return (
     <div className="mx-auto max-w-7xl py-6">
-      {/* Page header */}
       <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-slate-900">Dashboard</h1>
@@ -32,10 +31,8 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Stat cards */}
       <StatsCards />
 
-      {/* Single-column content */}
       <div className="mt-6">
         <section>
           <div className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-900/5">
@@ -49,7 +46,6 @@ export default function DashboardPage() {
               </Link>
             </header>
 
-            {/*  your TaskTable */}
             <div className="p-5">
               <TaskTable limit={8} condensed />
             </div>

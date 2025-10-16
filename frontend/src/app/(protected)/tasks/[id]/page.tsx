@@ -76,7 +76,6 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        {/*  edit card */}
         <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-900/5">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="font-medium text-slate-900 line-clamp-1">
@@ -87,7 +86,6 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
           <TaskForm onSubmit={updateTask} initial={task} />
         </section>
 
-        {/*  logs card */}
         <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-900/5">
           <h2 className="mb-3 font-medium text-slate-900">Riwayat</h2>
 
