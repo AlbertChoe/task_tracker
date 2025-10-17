@@ -1,4 +1,4 @@
-import { getTokenFromCookie } from './auth';
+import { clearTokenCookie, getTokenFromCookie } from './auth';
 
 export const API_BASE =
   process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8008'; // <- match your backend port
@@ -37,10 +37,27 @@ export async function api<T = any>(
       msg = await res.text();
     }
 
-    if (res.status === 403 && typeof window !== 'undefined') {
-      // When forbidden, push the user back to the dashboard to stay within owned resources.
-      if (window.location.pathname !== '/dashboard') {
-        window.location.href = '/dashboard';
+    if (typeof window !== 'undefined') {
+      if (res.status === 401) {
+        clearTokenCookie();
+        const { pathname, search } = window.location;
+        if (!pathname.startsWith('/login')) {
+          const params = new URLSearchParams();
+          const next = `${pathname}${search}`;
+          if (next && next !== '/') {
+            params.set('next', next);
+          }
+          const target = `/login${
+            params.toString() ? `?${params.toString()}` : ''
+          }`;
+          if (window.location.href !== `${window.location.origin}${target}`) {
+            window.location.href = target;
+          }
+        }
+      } else if (res.status === 403) {
+        if (window.location.pathname !== '/dashboard') {
+          window.location.href = '/dashboard';
+        }
       }
     }
 
