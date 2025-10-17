@@ -1,7 +1,7 @@
 from sqlmodel import SQLModel, Field, create_engine, Session, Relationship
 from typing import Optional, List
-from datetime import datetime, date
-from zoneinfo import ZoneInfo
+from datetime import datetime, date, timezone, timedelta
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 import uuid
 from .core.config import settings
 from sqlalchemy.engine.url import make_url
@@ -18,9 +18,14 @@ except Exception as e:
 
 engine = create_engine(settings.DATABASE_URL, pool_pre_ping=True)
 
+try:
+    JAKARTA_TZ = ZoneInfo("Asia/Jakarta")
+except ZoneInfoNotFoundError:
+    JAKARTA_TZ = timezone(timedelta(hours=7))
+
 
 def jakarta_now() -> datetime:
-    return datetime.now(ZoneInfo("Asia/Jakarta"))
+    return datetime.now(JAKARTA_TZ)
 
 
 def init_db():

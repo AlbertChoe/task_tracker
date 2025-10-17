@@ -211,9 +211,6 @@ export default function TaskForm({
         <div className="space-y-1.5">
           <Label htmlFor="start_date">Start date</Label>
           <Input id="start_date" type="date" {...register('start_date')} />
-          <p className="text-xs text-muted-foreground">
-            Optional. Format: YYYY-MM-DD
-          </p>
         </div>
 
         <div className="space-y-1.5">
