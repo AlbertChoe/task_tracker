@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "http://13.213.33.144/api/:path*"
+      "destination": "task-tracker-albert.duckdns.org/api/:path*"
     }
   ]
 }
